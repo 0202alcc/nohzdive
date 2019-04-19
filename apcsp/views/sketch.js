@@ -24,6 +24,8 @@ function setup() {
 
 function draw() {
 	var initseconds;
+	fill(color("#8a3335"));
+	noStroke();
 	background('black');
 	console.log(charFalling);
 	characFall.size(25, 50);
@@ -62,8 +64,7 @@ function draw() {
 						charfx = 487.5;
 						charfy = 100;
 						charx = -100;
-						chary = 1000;
-
+						chary = -100;
 						
 						charFalling = true;
 					}
@@ -82,6 +83,7 @@ function draw() {
 	}
 
 	if (controlsEnabled == true){
+		
 		//Controls
 		if (keyIsDown(UP_ARROW)){
 			charfy -= 10;
@@ -111,6 +113,9 @@ function draw() {
 		}
 		
 		//ledge animation
+		
+		fill(color("#b7ada3"));
+		noStroke();
 		rect(0, ledgey, 100, 50);
 		rect(900, ledgey, 100, 50);
 		ledgey -= 10;
