@@ -20,6 +20,7 @@ let airplanex = 0;
 let clothes1y = -1000;
 let clothes2y = -1000;
 let clothes3y = -1000;
+
 function preload(){
 	start = loadImage("/images/start.png");
 	characFall = createImg("/images/characfallGif.gif");
