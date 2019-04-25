@@ -1,47 +1,73 @@
-let start, characFall, charac, drone, balloonBlue, balloonGrey, balloonOrange, windowLeft, windowRight, paperAirplane, clothes1, clothes2, clothes3;
-let startClicked = false;
-let charFalling = false;
-let charx = -25, chary = 325;
-let charfx = -100, charfy = 1000;
-let startx, starty;
-let dronex = -100, droney = -100;
-let leftrectx, leftrecty, leftrectw, leftrecth;
-let rightrectx = 1100, rightrecty = 0, rightrectw = 100, rightrecth = 750;
-let ledgey = 800;
-let controlsEnabled = false;
-let droneEnabled = false, droneReset = false;
-let dronextarget, droneytarget;
 var i = 0;
-let balloonBluex = -1000, balloonBluey = -1000;
-let balloonGreyx = -1000, balloonGreyy = -1000;
-let balloonOrangex = -1000, balloonOrangey = -1000;
-let windowy = -1000;
-let airplanex = 0;
-let clothes1y = -1000;
-let clothes2y = -1000;
-let clothes3y = -1000;
+var start, charac, drone, balloon, plane, clothes;
 
 function preload(){
-	start = loadImage("/images/start.png");
-	characFall = createImg("/images/characfallGif.gif");
-	charac = createImg("/images/characGif.gif");
-	drone = createImg("/images/drone.gif");
-	balloonBlue = loadImage("/images/balloonBlue.png");
-	balloonGrey = loadImage("/images/balloonGrey.png");
-	balloonOrange = loadImage("/images/balloonOrange.png");
-	windowLeft = loadImage("/images/windowLeft.png");
-	windowRight = loadImage("/images/windowRight.png");
-	paperAirplane = createImg("/images/paperAirplane.gif");
-	clothes1 = loadImage("/images/clothes1.png");
-	clothes2 = loadImage("/images/clothes2.png");
-	clothes3 = loadImage("/images/clothes3.png");
+	start = {
+		image: loadImage("/images/start.png"),
+		startClicked: false,
+		controlsEnabled: false,
+		leftrectx: null, 
+		leftrecty: null,
+		leftrectw: null,
+		leftrecth: null,
+		startx: 400,
+		starty: 325,
+		rightrectx: 1100,
+		rightrecty: 0,
+		rightrectw: 100,
+		rightrecth: 750,
+		ledgey: 800
+	}
+	charac = {
+		image: createImg("/images/characGif.gif"),
+		imageFall: createImg("/images/characfallGif.gif"),
+		charFalling: false,
+		charx: -25,
+		chary: 325,
+		charfx: -100,
+		charfy: 1000,
+	}
+	drone = {
+		image: createImg("/images/drone.gif"),
+		droneEnabled: false,
+		droneReset: false,
+		dronextarget: null,
+		droneytarget: null,
+		dronex: -100,
+		droney: 100
+	}
+	balloon = {
+		imageBlue: loadImage("/images/balloonBlue.png"),
+		imageGrey: loadImage("/images/balloonGrey.png"),
+		imageOrange: loadImage("/images/balloonOrange.png"),
+		balloonBluex: -1000,
+		balloonBluey: -1000,
+		balloonGreyx: -1000,
+		balloonGreyy: -1000,
+		balloonOrangex: -1000,
+		balloonOrangey: -1000
+	}
+	
+	plane = {
+		windowLeft: loadImage("/images/windowLeft.png"),
+		windowRight: loadImage("/images/windowRight.png"),
+		paperAirplane: createImg("/images/paperAirplane.gif"),
+		windowy: -1000,
+		airplanex: 0
+	}
+	
+	clothes = {
+		clothes1: loadImage("/images/clothes1.png"),
+		clothes2: loadImage("/images/clothes2.png"),
+		clothes3: loadImage("/images/clothes3.png"),
+		clothes1y: -1000,
+		clothes2y: -1000,
+		clothes3y: -1000
+	}
 }
 function setup() {
 	createCanvas(1000, 750);
 	background('black');
-	startx = 400;
-	starty = 325;
-	
 }
 
 function draw() {
@@ -50,148 +76,148 @@ function draw() {
 	fill(color("#8a3335"));
 	noStroke();
 	background('black');
-	paperAirplane.size(100, 100);
-	paperAirplane.position(airplanex, windowy);
-	characFall.size(25, 50);
-	characFall.position(charfx, charfy);
-	charac.size(25, 50);
-	charac.position(charx, chary);
-	drone.size(100, 100);
-	drone.position(dronex, droney);
+	plane.paperAirplane.size(100, 100);
+	plane.paperAirplane.position(plane.airplanex, plane.windowy);
+	charac.imageFall.size(25, 50);
+	charac.imageFall.position(charac.charfx, charac.charfy);
+	charac.image.size(25, 50);
+	charac.image.position(charac.charx, charac.chary);
+	drone.image.size(100, 100);
+	drone.image.position(drone.dronex, drone.droney);
 	
-	image(balloonBlue, balloonBluex, balloonBluey, 100, 100);
-	image(balloonGrey, balloonGreyx, balloonGreyy, 100, 100);
-	image(balloonOrange, balloonOrangex, balloonOrangey, 100, 100);
+	image(balloon.imageBlue, balloon.balloonBluex, balloon.balloonBluey, 100, 100);
+	image(balloon.imageGrey, balloon.balloonGreyx, balloon.balloonGreyy, 100, 100);
+	image(balloon.imageOrange, balloon.balloonOrangex, balloon.balloonOrangey, 100, 100);
 	
-	image(clothes1, 100, clothes1y);
-	image(clothes2, 100, clothes2y);
-	image(clothes3, 100, clothes3y);
+	image(clothes.clothes1, 100, clothes.clothes1y);
+	image(clothes.clothes2, 100, clothes.clothes2y);
+	image(clothes.clothes3, 100, clothes.clothes3y);
 	
-	image(start, startx, starty);
-	rect(leftrectx, leftrecty, leftrectw, leftrecth);
-	rect(rightrectx, rightrecty, rightrectw, rightrecth);
+	image(start.image, start.startx, start.starty);
+	rect(start.leftrectx, start.leftrecty, start.leftrectw, start.leftrecth);
+	rect(start.rightrectx, start.rightrecty, start.rightrectw, start.rightrecth);
 	
-	image(windowLeft, 80, windowy);
-	image(windowRight, 895, windowy);
-	if ((startClicked == true) && (controlsEnabled == false)){
-		startx = -100;
-		starty = -100;
-		charx += 3;
+	image(plane.windowLeft, 80, plane.windowy);
+	image(plane.windowRight, 895, plane.windowy);
+	if ((start.startClicked == true) && (start.controlsEnabled == false)){
+		start.startx = -100;
+		start.starty = -100;
+		charac.charx += 3;
 		//character reaches middle of screen
-		if (charx >= 487.5){
-			charx = 487.5;
-			leftrectw -= 3;
+		if (charac.charx >= 487.5){
+			charac.charx = 487.5;
+			start.leftrectw -= 3;
 			//character reaches edge of building
-			if (leftrectw <= 512.5){
+			if (start.leftrectw <= 512.5){
 				// leftrectw = 512.5;
 				//charcter jumps and building moves to side
-				chary -= 3;
-				leftrectw -= 3; // need to make this more parabolic
-				if (chary <= 100){
-					chary = 100;
+				charac.chary -= 3;
+				start.leftrectw -= 3; // need to make this more parabolic
+				if (charac.chary <= 100){
+					charac.chary = 100;
 				}
-				if (leftrectw <= 200){
-					rightrectx -= 3;
-					if (leftrectw <= 100){
-						leftrectw = 100;
+				if (start.leftrectw <= 200){
+					start.rightrectx -= 3;
+					if (start.leftrectw <= 100){
+						start.leftrectw = 100;
 					}
-					if (rightrectx <= 900){
-						rightrectx = 900;
+					if (start.rightrectx <= 900){
+						start.rightrectx = 900;
 						
-						charfx = 487.5;
-						charfy = 100;
-						charx = -100;
-						chary = -100;
+						charac.charfx = 487.5;
+						charac.charfy = 100;
+						charac.charx = -100;
+						charac.chary = -100;
 						
-						charFalling = true;
+						charac.charFalling = true;
 					}
 				}
 				
 			}
 		}
 	}
-	if (charFalling == true){
-		leftrecty -= 3;
-		if (leftrecty <= 0){
-			leftrecty = 0;
+	if (charac.charFalling == true){
+		start.leftrecty -= 3;
+		if (start.leftrecty <= 0){
+			start.leftrecty = 0;
 			//Actual controls
-			controlsEnabled = true;
+			start.controlsEnabled = true;
 		}
 	}
 
-	if (controlsEnabled == true){
+	if (start.controlsEnabled == true){
 		
 		//Controls
 		if (keyIsDown(UP_ARROW)){
-			charfy -= 10;
+			charac.charfy -= 10;
 		}
 		if (keyIsDown(DOWN_ARROW)){
-			charfy += 10;
+			charac.charfy += 10;
 		}
 		if (keyIsDown(LEFT_ARROW)){
-			charfx -= 10;
+			charac.charfx -= 10;
 		}
 		if (keyIsDown(RIGHT_ARROW)){
-			charfx += 10;
+			charac.charfx += 10;
 		}
 		
 		//Character boundaries
-		if (charfx <= 110){
-			charfx = 110;
+		if (charac.charfx <= 110){
+			charac.charfx = 110;
 		}
-		if (charfx >= 875){
-			charfx = 875;
+		if (charac.charfx >= 875){
+			charac.charfx = 875;
 		}
-		if (charfy <= 10){
-			charfy = 10
+		if (charac.charfy <= 10){
+			charac.charfy = 10
 		}
-		if (charfy >= 700){
-			charfy = 700;
+		if (charac.charfy >= 700){
+			charac.charfy = 700;
 		}
 		
 		//ledge animation
 		fill(color("#b7ada3"));
 		noStroke();
-		rect(0, ledgey, 100, 50);
-		rect(900, ledgey, 100, 50);
-		ledgey -= 10;
-		if (ledgey <= -10){
-			ledgey = 800;
+		rect(0, start.ledgey, 100, 50);
+		rect(900, start.ledgey, 100, 50);
+		start.ledgey -= 10;
+		if (start.ledgey <= -10){
+			start.ledgey = 800;
 		}
 		
 		//drone
-		hitbox(dronex, droney);
+		hitbox(drone.dronex, drone.droney);
 		console.log(frameCount);
 		if (frameCount % 1000 == 0){
 			console.log("100");
 			i = 0;
-			droneReset = false;
+			drone.droneReset = false;
 			droneCall();
 		}
 		
-		if(droneReset == true){
-			droney -= 20;
-			droneEnabled = false;
+		if(drone.droneReset == true){
+			drone.droney -= 20;
+			drone.droneEnabled = false;
 		}
-		if(droneReset == false){
-			if (dronex < dronextarget){
-				dronex += 5;
+		if(drone.droneReset == false){
+			if (drone.dronex < drone.dronextarget){
+				drone.dronex += 5;
 			}
-			if (dronex > dronextarget){
-				dronex -= 5;
+			if (drone.dronex > drone.dronextarget){
+				drone.dronex -= 5;
 			}
-			if (droney < droneytarget){
-				droney += 5;
+			if (drone.droney < drone.droneytarget){
+				drone.droney += 5;
 			}
-			if (droney > droneytarget){
-				droney -= 5;
+			if (drone.droney > drone.droneytarget){
+				drone.droney -= 5;
 			}
-			if( (dronex > (dronextarget - 10)) && (dronex < (dronextarget + 10)) && (droney > (droneytarget - 10)) && (dronex < (dronextarget + 10)) ){
-			dronex = dronextarget;
-			droney = droneytarget;
+			if( (drone.dronex > (drone.dronextarget - 10)) && (drone.dronex < (drone.dronextarget + 10)) && (drone.droney > (drone.droneytarget - 10)) && (drone.dronex < (drone.dronextarget + 10)) ){
+				drone.dronex = drone.dronextarget;
+				drone.droney = drone.droneytarget;
 			}
-			if ((dronex == dronextarget) && (droney == droneytarget)){
-				droneEnabled = true;
+			if ((drone.dronex == drone.dronextarget) && (drone.droney == drone.droneytarget)){
+				drone.droneEnabled = true;
 				droneCall();
 				i++;
 			}
@@ -203,78 +229,70 @@ function draw() {
 			clothesCall();
 		}
 		
-		clothes1y -= 10;
-		clothesHit(360, 687, clothes1y);
+		clothes.clothes1y -= 10;
+		clothesHit(360, 687, clothes.clothes1y);
 		//between 360 and 687
 		
-		clothes2y -= 10;
-		clothesHit(237, 535, clothes2y);
+		clothes.clothes2y -= 10;
+		clothesHit(237, 535, clothes.clothes2y);
 		//between 237 and 535
 		
-		clothes3y -= 10;
-		clothesHit(123, 405, clothes3y);
+		clothes.clothes3y -= 10;
+		clothesHit(123, 405, clothes.clothes3y);
 		//between 123 and 405
 		
 		//paper airplane
-		hitbox(airplanex, windowy);
+		hitbox(plane.airplanex, plane.windowy);
 		if (frameCount % 700 == 0){
-			windowy = 750;
-			airplanex = 0;
+			plane.windowy = 750;
+			plane.airplanex = 0;
 		}
 		
-		airplanex += 15;
-		if (airplanex == 900){
-			airplanex = -1000;
+		plane.airplanex += 15;
+		if (plane.airplanex == 900){
+			plane.airplanex = -1000;
 		}
-		windowy -= 10;
+		plane.windowy -= 10;
 		//balloon
-		hitbox(balloonBluex, balloonBluey);
-		hitbox(balloonGreyx, balloonGreyy);
-		hitbox(balloonOrangex, balloonOrangey);
+		hitbox(balloon.balloonBluex, balloon.balloonBluey);
+		hitbox(balloon.balloonGreyx, balloon.balloonGreyy);
+		hitbox(balloon.balloonOrangex, balloon.balloonOrangey);
 		if (frameCount % 300 == 0){
 			balloonCall();
 		}
-		balloonBluey -= 5;
-		balloonGreyy -= 5;
-		balloonOrangey -= 5;
+		balloon.balloonBluey -= 5;
+		balloon.balloonGreyy -= 5;
+		balloon.balloonOrangey -= 5;
 	}
 }
 
 function mouseClicked(){
 	if ((mouseX > 400) && (mouseX < 600) && (mouseY>325) && (mouseY < 425)){
-		startClicked = true;
-		leftrectx = 0;
-		leftrecty = 375;
-		leftrectw = 1000;
-		leftrecth = 750;
-	}
-}
-
-function characterAnimation(){
-	if (charFalling == true){
-		return characFall;
-	} else if (charFalling == false){
-		return charac;
+		start.startClicked = true;
+		start.leftrectx = 0;
+		start.leftrecty = 375;
+		start.leftrectw = 1000;
+		start.leftrecth = 750;
 	}
 }
 
 function droneCall(){
-	if (droneEnabled == false){
-		dronex = Math.floor(Math.random()*900) + 100;
-		droney = 750;
-		dronextarget = Math.floor(Math.random()*900) + 100;
-		droneytarget = Math.floor(Math.random()*750);
+	if (drone.droneEnabled == false){
+		drone.dronex = Math.floor(Math.random()*900) + 100;
+		drone.droney = 750;
+		drone.dronextarget = Math.floor(Math.random()*900) + 100;
+		drone.droneytarget = Math.floor(Math.random()*750);
 		// console.log("1 s");
 	}
-	if (droneEnabled == true){
+	if (drone.droneEnabled == true){
 		if (i < 3){
-			dronextarget = Math.floor(Math.random()*825) + 100;
-			droneytarget = Math.floor(Math.random()*675);
-			console.log(dronextarget);
-			console.log(droneytarget);
+			drone.dronextarget = Math.floor(Math.random()*825) + 100;
+			drone.droneytarget = Math.floor(Math.random()*675);
+			console.log(drone.dronextarget);
+			console.log(drone.droneytarget);
 		} else {
-			droneytarget = -1000;
-			droneReset = true;
+			drone.droneytarget = -1000;
+			drone.droneReset = true;
 		}
 	}
 	
@@ -283,31 +301,31 @@ function droneCall(){
 function balloonCall(){
 	let randThree = Math.floor(random(0, 3));
 	if(randThree == 0){
-		balloonBluex = Math.floor(Math.random()*800) + 100;
-		balloonBluey = 750;
+		balloon.balloonBluex = Math.floor(Math.random()*800) + 100;
+		balloon.balloonBluey = 750;
 	} else if(randThree == 1){
-		balloonGreyx = Math.floor(Math.random()*800) + 100;
-		balloonGreyy = 750;
+		balloon.balloonGreyx = Math.floor(Math.random()*800) + 100;
+		balloon.balloonGreyy = 750;
 	} else if(randThree == 2){
-		balloonOrangex = Math.floor(Math.random()*800) + 100;
-		balloonOrangey = 750;
+		balloon.balloonOrangex = Math.floor(Math.random()*800) + 100;
+		balloon.balloonOrangey = 750;
 	}
 }
 
 function clothesCall(){
 	let randThree = Math.floor(random(0, 3));
 	if(randThree == 0){
-		clothes1y = 750;
+		clothes.clothes1y = 750;
 	} else if(randThree == 1){
-		clothes2y = 750;
+		clothes.clothes2y = 750;
 	} else if(randThree == 2){
-		clothes3y = 750;
+		clothes.clothes3y = 750;
 	}
 }
 
 function hitbox(x, y){
 	if( (x > 100) && (x<900) && (y>0) && (y<750)){
-		if( ((charfx > x) && (charfx < (x+100))) && ((charfy > y) && (charfy < x+100)) ){
+		if( ((charac.charfx > x) && (charac.charfx < (x+100))) && ((charac.charfy > y) && (charac.charfy < x+100)) ){
 			console.log("contact");
 			noLoop();
 		}
@@ -315,7 +333,7 @@ function hitbox(x, y){
 }
 
 function clothesHit(xmin, xmax, clothesyvar){
-	if( ((charfx < 100 + xmin) || (charfx > (xmax + 100)))  && ((charfy > clothesyvar) && (charfy < clothesyvar + 100))){
+	if( ((charac.charfx < 100 + xmin) || (charac.charfx > (xmax + 100)))  && ((charac.charfy > clothesyvar) && (charac.charfy < clothesyvar + 100))){
 			console.log("contact");
 			noLoop();
 	}
