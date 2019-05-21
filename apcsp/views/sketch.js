@@ -1,15 +1,17 @@
-var i = 0;
 var start, charac, drone, balloon, plane, clothes;
 
 function preload(){
 	start = {
 		image: loadImage("/images/start.png"),
+		nohzdyve: loadImage("/images/Nohzdyve.gif"),
 		startClicked: false,
 		controlsEnabled: false,
+		endGame: false,
 		leftrectx: null, 
 		leftrecty: null,
 		leftrectw: null,
 		leftrecth: null,
+		frame1: null,
 		startx: 400,
 		starty: 325,
 		rightrectx: 1100,
@@ -31,8 +33,8 @@ function preload(){
 		image: createImg("/images/drone.gif"),
 		droneEnabled: false,
 		droneReset: false,
-		dronextarget: null,
-		droneytarget: null,
+		dronextarget: -1000,
+		droneytarget: -1000,
 		dronex: -100,
 		droney: 100
 	}
@@ -47,7 +49,6 @@ function preload(){
 		balloonOrangex: -1000,
 		balloonOrangey: -1000
 	}
-	
 	plane = {
 		windowLeft: loadImage("/images/windowLeft.png"),
 		windowRight: loadImage("/images/windowRight.png"),
@@ -55,7 +56,6 @@ function preload(){
 		windowy: -1000,
 		airplanex: 0
 	}
-	
 	clothes = {
 		clothes1: loadImage("/images/clothes1.png"),
 		clothes2: loadImage("/images/clothes2.png"),
@@ -71,8 +71,8 @@ function setup() {
 }
 
 function draw() {
-	// console.log(frameCount);
 	var initseconds;
+	
 	fill(color("#8a3335"));
 	noStroke();
 	background('black');
@@ -93,31 +93,50 @@ function draw() {
 	image(clothes.clothes2, 100, clothes.clothes2y);
 	image(clothes.clothes3, 100, clothes.clothes3y);
 	
+	start.nohzdyve.resize(600, 200);
+	image(start.nohzdyve, start.startx - 200, start.starty - 200);
 	image(start.image, start.startx, start.starty);
+	
 	rect(start.leftrectx, start.leftrecty, start.leftrectw, start.leftrecth);
 	rect(start.rightrectx, start.rightrecty, start.rightrectw, start.rightrecth);
 	
 	image(plane.windowLeft, 80, plane.windowy);
 	image(plane.windowRight, 895, plane.windowy);
+	
+	if (start.endGame == true){
+		fill(color("#ef6630"));
+		textFont("Courier New");
+		textSize(75);
+		textAlign(CENTER, TOP);
+		text("Your score: " + document.getElementById("scoreid").innerHTML, 0, 450, width);
+		textSize(50);
+		textAlign(CENTER, TOP);
+		text("Try again?", 0, 550, width);
+	}
+	
 	if ((start.startClicked == true) && (start.controlsEnabled == false)){
+		start.endGame = false;
 		start.startx = -100;
 		start.starty = -100;
-		charac.charx += 3;
+		charac.charx += 5;
 		//character reaches middle of screen
 		if (charac.charx >= 487.5){
 			charac.charx = 487.5;
-			start.leftrectw -= 3;
+			start.leftrectw -= 5;
 			//character reaches edge of building
 			if (start.leftrectw <= 512.5){
 				// leftrectw = 512.5;
 				//charcter jumps and building moves to side
-				charac.chary -= 3;
-				start.leftrectw -= 3; // need to make this more parabolic
+				if (start.frameAnimate == null){
+					start.frameAnimate = frameCount;
+				}
+				charac.chary -= 5;
+				start.leftrectw -= 5;
 				if (charac.chary <= 100){
 					charac.chary = 100;
 				}
 				if (start.leftrectw <= 200){
-					start.rightrectx -= 3;
+					start.rightrectx -= 5;
 					if (start.leftrectw <= 100){
 						start.leftrectw = 100;
 					}
@@ -137,7 +156,7 @@ function draw() {
 		}
 	}
 	if (charac.charFalling == true){
-		start.leftrecty -= 3;
+		start.leftrecty -= 5;
 		if (start.leftrecty <= 0){
 			start.leftrecty = 0;
 			//Actual controls
@@ -146,7 +165,12 @@ function draw() {
 	}
 
 	if (start.controlsEnabled == true){
+		//set frame counter
+		if (start.frame1 == null){
+			start.frame1 = frameCount;
+		}
 		
+		document.getElementById("scoreid").innerHTML = frameCount - start.frame1;
 		//Controls
 		if (keyIsDown(UP_ARROW)){
 			charac.charfy -= 10;
@@ -186,48 +210,60 @@ function draw() {
 		}
 		
 		//drone
-		hitbox(drone.dronex, drone.droney);
+		hitbox(drone.dronex, drone.droney, "drone");
 		console.log(frameCount);
-		if (frameCount % 1000 == 0){
-			console.log("100");
-			i = 0;
-			drone.droneReset = false;
-			droneCall();
+		if ((frameElement - start.frame1) < 1000){
+			if (frameCount % 500 == 0){
+				console.log("call drone");
+				droneCall();
+			}
+		} else if((frameElement - start.frame1) < 2000){
+			if (frameCount % 250 == 0){
+				console.log("call drone");
+				droneCall();
+			}
+		} else {
+			if (frameCount % 150 == 0){
+				console.log("call drone");
+				droneCall();
+			}
+		}
+			
+		
+		if (drone.dronex < (drone.dronextarget + 10) && drone.dronex > (drone.dronextarget - 10)){
+			drone.dronex = drone.dronextarget;
+		} else if (drone.dronex < drone.dronextarget){
+			drone.dronex += 10;
+		} else if (drone.dronex > drone.dronextarget){
+			drone.dronex -= 10;
 		}
 		
-		if(drone.droneReset == true){
-			drone.droney -= 20;
-			drone.droneEnabled = false;
-		}
-		if(drone.droneReset == false){
-			if (drone.dronex < drone.dronextarget){
-				drone.dronex += 5;
-			}
-			if (drone.dronex > drone.dronextarget){
-				drone.dronex -= 5;
-			}
-			if (drone.droney < drone.droneytarget){
-				drone.droney += 5;
-			}
-			if (drone.droney > drone.droneytarget){
-				drone.droney -= 5;
-			}
-			if( (drone.dronex > (drone.dronextarget - 10)) && (drone.dronex < (drone.dronextarget + 10)) && (drone.droney > (drone.droneytarget - 10)) && (drone.dronex < (drone.dronextarget + 10)) ){
-				drone.dronex = drone.dronextarget;
-				drone.droney = drone.droneytarget;
-			}
-			if ((drone.dronex == drone.dronextarget) && (drone.droney == drone.droneytarget)){
-				drone.droneEnabled = true;
-				droneCall();
-				i++;
-			}
+		if (drone.droney < (drone.droneytarget + 10) && drone.droney > (drone.droneytarget - 10)){
+			drone.droney = drone.droneytarget;
+			drone.droneytarget -= 15;
+		} else if (drone.droney < drone.droneytarget){
+			drone.droney += 10;
+		} else if (drone.droney > drone.droneytarget){
+			drone.droney -= 10;
 		}
 		
 
 		//clothesline
-		if (frameCount % 400 == 0){
-			clothesCall();
+		if ((frameElement - start.frame1) < 1000){
+			if (frameCount % 400 == 0){
+				clothesCall();
+			}
+		} else if((frameElement - start.frame1) < 2000){
+			if (frameCount % 300 == 0){
+				clothesCall();
+			}
+		} else {
+			if (frameCount % 200 == 0){
+				clothesCall();
+			}
 		}
+		
+		
 		
 		clothes.clothes1y -= 10;
 		clothesHit(360, 687, clothes.clothes1y);
@@ -242,11 +278,25 @@ function draw() {
 		//between 123 and 405
 		
 		//paper airplane
-		hitbox(plane.airplanex, plane.windowy);
-		if (frameCount % 700 == 0){
-			plane.windowy = 750;
-			plane.airplanex = 0;
+		hitbox(plane.airplanex, plane.windowy, "plane");
+		
+		if ((frameElement - start.frame1) < 1000){
+			if (frameCount % 700 == 0){
+				plane.windowy = 750;
+				plane.airplanex = 0;
+			}
+		} else if((frameElement - start.frame1) < 2000){
+			if (frameCount % 500 == 0){
+				plane.windowy = 750;
+				plane.airplanex = 0;
+			}
+		} else {
+			if (frameCount % 300 == 0){
+				plane.windowy = 750;
+				plane.airplanex = 0;
+			}
 		}
+		
 		
 		plane.airplanex += 15;
 		if (plane.airplanex == 900){
@@ -254,12 +304,24 @@ function draw() {
 		}
 		plane.windowy -= 10;
 		//balloon
-		hitbox(balloon.balloonBluex, balloon.balloonBluey);
-		hitbox(balloon.balloonGreyx, balloon.balloonGreyy);
-		hitbox(balloon.balloonOrangex, balloon.balloonOrangey);
-		if (frameCount % 300 == 0){
-			balloonCall();
+		hitbox(balloon.balloonBluex, balloon.balloonBluey, "balloon");
+		hitbox(balloon.balloonGreyx, balloon.balloonGreyy, "balloon");
+		hitbox(balloon.balloonOrangex, balloon.balloonOrangey, "balloon");
+		
+		if ((frameElement - start.frame1) < 1000){
+			if (frameCount % 300 == 0){
+				balloonCall();
+			}
+		} else if((frameElement - start.frame1) < 2000){
+			if (frameCount % 200 == 0){
+				balloonCall();
+			}
+		} else {
+			if (frameCount % 100 == 0){
+				balloonCall();
+			}
 		}
+		
 		balloon.balloonBluey -= 5;
 		balloon.balloonGreyy -= 5;
 		balloon.balloonOrangey -= 5;
@@ -267,35 +329,23 @@ function draw() {
 }
 
 function mouseClicked(){
-	if ((mouseX > 400) && (mouseX < 600) && (mouseY>325) && (mouseY < 425)){
+	if ((mouseX > 400) && (mouseX < 600) && (mouseY>325) && (mouseY < 425) && (start.startClicked == false)){
 		start.startClicked = true;
 		start.leftrectx = 0;
 		start.leftrecty = 375;
 		start.leftrectw = 1000;
 		start.leftrecth = 750;
+		document.getElementById("scoreid").innerHTML = 0;
 	}
 }
 
 function droneCall(){
-	if (drone.droneEnabled == false){
-		drone.dronex = Math.floor(Math.random()*900) + 100;
-		drone.droney = 750;
-		drone.dronextarget = Math.floor(Math.random()*900) + 100;
-		drone.droneytarget = Math.floor(Math.random()*750);
-		// console.log("1 s");
-	}
-	if (drone.droneEnabled == true){
-		if (i < 3){
-			drone.dronextarget = Math.floor(Math.random()*825) + 100;
-			drone.droneytarget = Math.floor(Math.random()*675);
-			console.log(drone.dronextarget);
-			console.log(drone.droneytarget);
-		} else {
-			drone.droneytarget = -1000;
-			drone.droneReset = true;
-		}
-	}
-	
+	console.log("droneCall()");
+	console.log("False");
+	drone.dronex = Math.floor(Math.random()*900) + 100;
+	drone.droney = 750;
+	drone.dronextarget = Math.floor(Math.random()*900) + 100;
+	drone.droneytarget = Math.floor(Math.random()*750);
 }
 
 function balloonCall(){
@@ -323,11 +373,11 @@ function clothesCall(){
 	}
 }
 
-function hitbox(x, y){
+function hitbox(x, y, name){
 	if( (x > 100) && (x<900) && (y>0) && (y<750)){
 		if( ((charac.charfx > x) && (charac.charfx < (x+100))) && ((charac.charfy > y) && (charac.charfy < x+100)) ){
-			console.log("contact");
-			noLoop();
+			console.log("contact", name);
+			endGame();
 		}
 	}
 }
@@ -335,6 +385,51 @@ function hitbox(x, y){
 function clothesHit(xmin, xmax, clothesyvar){
 	if( ((charac.charfx < 100 + xmin) || (charac.charfx > (xmax + 100)))  && ((charac.charfy > clothesyvar) && (charac.charfy < clothesyvar + 100))){
 			console.log("contact");
-			noLoop();
+			endGame();
 	}
+}
+
+function endGame(){
+	start.startClicked= false;
+	start.controlsEnabled= false;
+	start.endGame = true;
+	start.leftrectx= null;
+	start.leftrecty= null;
+	start.leftrectw= null;
+	start.leftrecth= null;
+	start.frame1= null;
+	start.startx= 400;
+	start.starty= 325;
+	start.rightrectx= 1100;
+	start.rightrecty= 0;
+	start.rightrectw= 100;
+	start.rightrecth= 750;
+	start.ledgey= 800;
+
+	charac.charFalling= false;
+	charac.charx= -25;
+	charac.chary= 325;
+	charac.charfx= -100;
+	charac.charfy= 1000;
+
+	drone.droneEnabled= false;
+	drone.droneReset= false;
+	drone.dronextarget= null;
+	drone.droneytarget= null;
+	drone.dronex= -100;
+	drone.droney= 100;
+
+	balloon.balloonBluex= -1000;
+	balloon.balloonBluey= -1000;
+	balloon.balloonGreyx= -1000;
+	balloon.balloonGreyy= -1000;
+	balloon.balloonOrangex= -1000;
+	balloon.balloonOrangey= -1000;
+
+	plane.windowy= -1000;
+	plane.airplanex= 0;
+	
+	clothes.clothes1y= -1000;
+	clothes.clothes2y= -1000;
+	clothes.clothes3y= -1000;
 }
